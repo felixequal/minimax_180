@@ -1,45 +1,36 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
-public class Bishop extends Piece
-{
-	//private int posX, posY, boardCode;
-	//private char owner;
-	///private char characterCode;
-	private ArrayList<String> moves;
-	private ArrayList<String> humanMoves;// = new ArrayList<String>();
-	private ArrayList<String> compMoves;// = new ArrayList<String>();
+public class King extends Piece
+	{
+		private ArrayList<String> moves;
+		private ArrayList<String> humanMoves;// = new ArrayList<String>();
+		private ArrayList<String> compMoves;// = new ArrayList<String>();
 	
-	
-	public Bishop(int x, int y, int code, char owner, char pcode )
+	public King(int x, int y, int code, char owner, char pcode )
 		{
 			setLocation(x,y);
-			//this.posX = x;
-			//this.posY = y;
-			//this.boardCode = code;
 			setCodeChar(pcode);
 			setOwner(owner);
 			setPieceCode(code);
-			//this.characterCode = pcode;
 			setGasleft(3);
-			//setLocation(posX, posY);
 			humanMoves = new ArrayList<String>();
 			compMoves = new ArrayList<String>();
 			moves = new ArrayList<String>();
-			//tempBoard = new int[7][8];
 		}
-	
-	
 	
 	public ArrayList<String> theMoves(int[][] board)
 	{
 	//	int[][]tempBoard = new int[7][8];
 		//tempBoard = board;
-		goDiagonal(1,1,board);
-		goDiagonal(-1,1, board);
+		goDiagonal(1, 1,board);
+		goDiagonal(-1, 1, board);
 		goDiagonal(1,-1,board);
 		goDiagonal(-1,-1,board);
+		goDiagonal(1, 0,board);
+		goDiagonal(0, 1, board);
+		goDiagonal(0,-1,board);
+		goDiagonal(-1, 0,board);
 		return moves;
 		//return moves;
 	}
@@ -60,10 +51,10 @@ public class Bishop extends Piece
 			System.out.println("codeMod init: " + codeModifier);
 			int[][]tempBoard = new int[7][8];
 			tempBoard = board;	
-			a = getLocationX();
-			b = getLocationY();
-			a+=incrementA;
-			b+=incrementB;
+			a = getLocationX() + incrementA;
+			b = getLocationY() + incrementB;
+			//a+=incrementA;
+			//b+=incrementB;
 			x= a % 7;
 			y= b % 8;
 			while ((a>= 0 && a < 7 && b < 8 && b >= 0)) 
@@ -87,12 +78,10 @@ public class Bishop extends Piece
 					tempBoard[x][y] = 5;
 					String move = (String.valueOf(getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
 					moves.add(move);
-					a+=incrementA;
-					b+=incrementB;
-					x= a % 7;
-					y= b % 8;
+					break;
 					}
 				}
 		}
 
 }
+

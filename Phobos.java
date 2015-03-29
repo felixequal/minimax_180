@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -24,17 +25,18 @@ public class Phobos
 			int[][] board = gameBoard.initBoard();
 			//Bishop testBishop = new Bishop(0, 4, -3, 'c',"b");
 			gameBoard.generateLegalMoves();
-			gameBoard.printMoves();
+			//gameBoard.printMoves();
 			//testBishop.theMoves(board);
 			
 			
-			gameBoard.displayBoard(board);
+			gameBoard.displayBoard();
 			scan = new Scanner(System.in);
 			humanMove = getInput();
 			System.out.println("Move = " + humanMove);
-			//testBishop.print();
-			//testBishop.setGasleft(2);
-			//testBishop.print();
+			String test = gameBoard.convertHumanInput(humanMove);
+			System.out.println("converted human input: " + test);
+			ArrayList<String> currentHumanLegalMoves = gameBoard.getHumanMoves();
+
 		}
 	
 	public static String getInput()

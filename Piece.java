@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 
-public class Piece
+public abstract class Piece
 	{
 	private int locationX = 0;
 	private int locationY = 0;
@@ -81,22 +81,27 @@ public class Piece
 		this.gasleft = gasleft;
 		}
 	
-	public ArrayList<String> getMoves()
-	{
-		return null;
-		
-	}
+	
 	
 	public void print()
 		{
-			System.out.printf("Owner: %c character code: %c gasleft %d\n", getOwner(), getCodeChar(), getGasleft());
+			String output = "" +getCodeChar()+getGasleft();
+			//System.out.printf("Owner: %c character code: %c gasleft %d\n", getOwner(), getCodeChar(), getGasleft());
+			System.out.printf("%4s", output);
 		}
 	
 	
 	public ArrayList<String> theMoves(int[][] board)
 	{
-		return null;
+	return null;	
 	}
+
+	public ArrayList<String> getMoves()
+		{
+		// TODO Auto-generated method stub
+		return null;
+		}
+
 	
 	
 	}
