@@ -9,17 +9,19 @@ public class Phobos
 	public static void main(String[] args)
 		{
 			String humanMove;
-			int[][] board = 
+			/*int[][] board = 
 			{
-						{0,0,0,-3,0,-3,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,3,0,3,0,0}
+						{0, 0, 0,-3, 0,-3, 0, 0},
+						{0, 0, 0, 0, 2, 0, 0, 0},
+						{0, 0, 0, 0, 0, 0, 0, 0},
+						{0, 0, 0, 0, 0, 0, 0, 0},
+						{0, 0, 0, 0, 0, 0, 0, 0},
+						{0, 0, 2, 0,-2, 0,-1, 0},
+						{0, 0, 0, 3, 0, 3, 0, 0}
 			};
-			Board gameBoard = new Board(board);
+			*/
+			Board gameBoard = new Board();
+			int[][] board = gameBoard.initBoard();
 			//Bishop testBishop = new Bishop(0, 4, -3, 'c',"b");
 			gameBoard.generateLegalMoves();
 			gameBoard.printMoves();

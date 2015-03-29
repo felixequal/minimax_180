@@ -6,9 +6,10 @@ public class Piece
 	private int locationX = 0;
 	private int locationY = 0;
 	private int pieceCode = 0;
-	private String codeChar;
-	private char owner;
+	private char codeChar ='x';
+	private char owner = 'x';
 	private int gasleft = 3;
+	private int codeModifier = 0;
 	
 	public int setLocation(int row, int column)
 	{
@@ -17,6 +18,18 @@ public class Piece
 	locationX = row;
 	locationY = column;
 	return 0;
+	}
+	
+	public void setCodeModifier()
+	{
+		if (owner == 'c') codeModifier = -1;
+		if (owner == 'h') codeModifier = 1;
+		//System.out.println("CodeMod in Piece: " + codeModifier);
+	}
+	
+	public int getCodeModifier()
+	{
+		return codeModifier;
 	}
 	
 	public int getLocationX()
@@ -41,11 +54,11 @@ public class Piece
 		this.pieceCode = pieceCode;
 	}
 
-	public String getCodeChar() {
+	public char getCodeChar() {
 		return codeChar;
 	}
 
-	public void setCodeChar(String codeChar) {
+	public void setCodeChar(char codeChar) {
 		this.codeChar = codeChar;
 	}
 
@@ -55,6 +68,7 @@ public class Piece
 
 	public void setOwner(char owner) {
 		this.owner = owner;
+		setCodeModifier();
 	}
 
 	public int getGasleft()
@@ -65,6 +79,17 @@ public class Piece
 	public void setGasleft(int gasleft)
 		{
 		this.gasleft = gasleft;
+		}
+	
+	public ArrayList<String> getMoves()
+	{
+		return null;
+		
+	}
+	
+	public void print()
+		{
+			System.out.printf("Owner: %c character code: %c gasleft %d\n", getOwner(), getCodeChar(), getGasleft());
 		}
 	
 	
