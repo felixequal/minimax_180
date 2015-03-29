@@ -4,21 +4,25 @@ import java.util.Arrays;
 
 public class Bishop extends Piece
 {
-	private int posX, posY, boardCode;
-	private char owner;
-	private String characterCode;
+	//private int posX, posY, boardCode;
+	//private char owner; //what
+	///private char characterCode;
 	private ArrayList<String> moves;
 	
 	
-	public Bishop(int x, int y, int code, char owner, String pcode )
+	public Bishop(int x, int y, int code, char owner, char pcode )
 		{
-			this.posX = x;
-			this.posY = y;
-			this.boardCode = code;
-			this.owner = owner;
-			this.characterCode = pcode;
+			
+			setLocation(x,y);
+			//this.posX = x;
+			//this.posY = y;
+			//this.boardCode = code;
+			setCodeChar(pcode);
+			setOwner(owner);
+			setPieceCode(code);
+			//this.characterCode = pcode;
 			setGasleft(3);
-			setLocation(posX, posY);
+			//setLocation(posX, posY);
 			moves = new ArrayList<String>();
 			//tempBoard = new int[7][8];
 		}
@@ -148,11 +152,6 @@ public class Bishop extends Piece
 		return moves;
 	}
 	
-	public void print()
-		{
-			System.out.printf("%c %s%d", owner, characterCode, getGasleft());
-		}
-	
 	public ArrayList<String> getMoves() {
 		return moves;
 	}
@@ -163,8 +162,9 @@ public class Bishop extends Piece
 	
 	public void goDiagonal(int incrementA, int incrementB, int[][] board)
 		{
-			int x,y,a,b;
-			int opposingPiece;
+			int x,y,a,b, opposingPiece;
+			int codeModifier = getCodeModifier();
+			System.out.println("codeMod init: " + codeModifier);
 			int[][]tempBoard = new int[7][8];
 			tempBoard = board;	
 			a = getLocationX();
@@ -178,17 +178,27 @@ public class Bishop extends Piece
 					//int[][]tempBoard2 = new int[7][8];
 					//tempBoard2 = board;
 					opposingPiece = tempBoard[x][y];
-					if(-(opposingPiece) < 0) {tempBoard[x][y] = 5; break;}
-					if(-(opposingPiece) > 0) {break;}
+					opposingPiece *= codeModifier;
+					System.out.println("Opposing piece = " + opposingPiece + "codeModifier = " + codeModifier);
+					if(opposingPiece == 6 || opposingPiece < 0)	
+						{
+					tempBoard[x][y] = 6;
+					String move = (String.valueOf(7-getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(7-x) + String.valueOf(y);
+					moves.add(move);
+					break;
+					}
+					if(opposingPiece > 0  && opposingPiece != 5 && opposingPiece != 6) {break;} //this will need to change if we can take own pieces
+					if(opposingPiece == 0 || opposingPiece == 5)
+					{
 					//System.out.println("up-right a: " + a + " b: " + b);
 					tempBoard[x][y] = 5;
-					String move = String.valueOf(getLocationX()) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
+					String move = (String.valueOf(7-getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(7-x) + String.valueOf(y);
 					moves.add(move);
 					a+=incrementA;
 					b+=incrementB;
 					x= a % 7;
 					y= b % 8;
-					
+					}
 				}
 		}
 	
