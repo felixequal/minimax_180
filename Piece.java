@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public abstract class Piece
 	{
+	private boolean remove = false;
 	private int locationX = 0;
 	private int locationY = 0;
 	private int pieceCode = 0;
@@ -10,6 +11,7 @@ public abstract class Piece
 	private char owner = 'x';
 	private int gasleft = 3;
 	private int codeModifier = 0;
+	private ArrayList<String> moves;
 	
 	public int setLocation(int row, int column)
 	{
@@ -99,9 +101,23 @@ public abstract class Piece
 	public ArrayList<String> getMoves()
 		{
 		// TODO Auto-generated method stub
-		return null;
+		return moves;
 		}
-
 	
+	public void setMoves(ArrayList<String> moves) {
+		this.moves = moves;
+	}
+	
+	
+	public void clearMoves()
+	{
+		moves.clear();
+	}
+	
+	public void info()
+	{
+		System.out.println("Piece--");
+		System.out.println("Owner: " + owner + " Gas: " + gasleft + " Char: " + pieceCode + " display char: " + codeChar + " Loc:" + locationX + ", " + locationY);
+	}
 	
 	}

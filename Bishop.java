@@ -7,12 +7,12 @@ public class Bishop extends Piece
 	//private int posX, posY, boardCode;
 	//private char owner;
 	///private char characterCode;
-	private ArrayList<String> moves;
-	private ArrayList<String> humanMoves;// = new ArrayList<String>();
-	private ArrayList<String> compMoves;// = new ArrayList<String>();
+	//private ArrayList<String> moves;
+	//private ArrayList<String> humanMoves;// = new ArrayList<String>();
+	//private ArrayList<String> compMoves;// = new ArrayList<String>();
 	
 	
-	public Bishop(int x, int y, int code, char owner, char pcode )
+	public Bishop(int x, int y, int code, char owner, char pcode)
 		{
 			setLocation(x,y);
 			//this.posX = x;
@@ -24,9 +24,10 @@ public class Bishop extends Piece
 			//this.characterCode = pcode;
 			setGasleft(3);
 			//setLocation(posX, posY);
-			humanMoves = new ArrayList<String>();
-			compMoves = new ArrayList<String>();
-			moves = new ArrayList<String>();
+		//	humanMoves = new ArrayList<String>();
+		//	compMoves = new ArrayList<String>();
+			ArrayList<String> moves = new ArrayList<String>();
+			setMoves(moves);
 			//tempBoard = new int[7][8];
 		}
 	
@@ -40,24 +41,15 @@ public class Bishop extends Piece
 		goDiagonal(-1,1, board);
 		goDiagonal(1,-1,board);
 		goDiagonal(-1,-1,board);
-		return moves;
+		return getMoves();
 		//return moves;
 	}
-	
-	
-	public ArrayList<String> getMoves() {
-		return moves;
-	}
-	
-	public void setMoves(ArrayList<String> moves) {
-		this.moves = moves;
-	}
-	
+		
 	public void goDiagonal(int incrementA, int incrementB, int[][] board)
 		{
 			int x,y,a,b, opposingPiece;
 			int codeModifier = getCodeModifier();
-			System.out.println("codeMod init: " + codeModifier);
+			//System.out.println("codeMod init: " + codeModifier);
 			int[][]tempBoard = new int[7][8];
 			tempBoard = board;	
 			a = getLocationX();
@@ -77,7 +69,7 @@ public class Bishop extends Piece
 						{
 					tempBoard[x][y] = 6;
 					String move = (String.valueOf(getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
-					moves.add(move);
+					getMoves().add(move);
 					break;
 					}
 					if(opposingPiece > 0  && opposingPiece != 5 && opposingPiece != 6) {break;} //this will need to change if we can take own pieces
@@ -86,7 +78,7 @@ public class Bishop extends Piece
 					//System.out.println("up-right a: " + a + " b: " + b);
 					tempBoard[x][y] = 5;
 					String move = (String.valueOf(getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
-					moves.add(move);
+					getMoves().add(move);
 					a+=incrementA;
 					b+=incrementB;
 					x= a % 7;
