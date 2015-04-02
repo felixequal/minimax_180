@@ -23,8 +23,13 @@ public class Phobos
 			scan = new Scanner(System.in);
 			while (true)
 				{
-					gameBoard.generateLegalMoves('h');
-					currentHumanLegalMoves = gameBoard.getHumanMoves();
+					currentHumanLegalMoves = gameBoard.generateLegalMoves('h');
+					//currentHumanLegalMoves = gameBoard.getHumanMoves();
+				/*	for(String move: currentHumanLegalMoves)
+						{
+							gameBoard.eval(move);
+						}
+				*/	
 					if(currentHumanLegalMoves.isEmpty()) gameBoard.gameOver('h');
 					if (gameBoard.isGameOver()) break;
 			while (checkLegal == "0000" || legalFlag == false)
@@ -34,33 +39,52 @@ public class Phobos
 			System.out.println("Move = " + humanMove);
 			checkLegal = convertHumanInput(humanMove);
 			if(checkLegal == "0000") {System.out.println(" --Illegal input-- ");}
-			
-			
-			
 			if(currentHumanLegalMoves.contains(checkLegal)) {legalFlag = true;}
 			else System.out.println(" **Illegal move** ");
 			}
-			
 			System.out.println("Correct legal human move entered. converted human input to: " + checkLegal);
 			System.out.println("PHOBOS: all human moves: " + gameBoard.humanMoves);
 			gameBoard.makeMove(checkLegal);
-			board = gameBoard.initBoard();
-			gameBoard.displayBoard();
+			
 			legalFlag = false;
 			checkLegal = "0000";
 			gameBoard.cleanup();
+			board = gameBoard.initBoard();
+			gameBoard.displayBoard();
 			currentHumanLegalMoves.clear();
 			Thread.sleep(2000);
-			gameBoard.generateLegalMoves('c');
+			/*System.out.println("retrieve last gameState?");
+			String yesno = "";
+			yesno = scan.nextLine();
+			System.out.println("entered: " + yesno);
+			if(yesno.contains("yes"))
+				{
+					System.out.println("here is the last gameState");
+					
+					ArrayList<GameState> oldBoards = gameBoard.getAllBoards();
+					System.out.println("blah" + oldBoards);
+					int size = oldBoards.size();
+					GameState test = (GameState)oldBoards.get(size-1);
+					test.display();
+					System.out.println("Would you like to revert?");
+					yesno = scan.nextLine();
+					if( yesno.contains("yes"))
+						{
+							gameBoard.revertMove(test);
+						}
+				}
+				*/
+			//gameBoard.generateLegalMoves('c');
 			
 			System.out.println("PHOBOS: all Comp moves: " + gameBoard.compMoves);
-			currentCompLegalMoves = gameBoard.getCompMoves();
-			if(currentCompLegalMoves.isEmpty()) gameBoard.gameOver('c');
-			if (gameBoard.isGameOver()) break;
-			Random rand = new Random();
-			int r = rand.nextInt();
+			//currentCompLegalMoves = gameBoard.getCompMoves();
+			//if(currentCompLegalMoves.isEmpty()) gameBoard.gameOver('c');
+			//if (gameBoard.isGameOver()) break;
+			gameBoard.minimax(board);
+			//Random rand = new Random();
+			//int r = rand.nextInt();
 			//r= r % currentCompLegalMoves.size();
-			gameBoard.makeMove(currentCompLegalMoves.get(0));
+			//gameBoard.makeMove(currentCompLegalMoves.get(0));
 			board = gameBoard.initBoard();
 			gameBoard.displayBoard();
 			
@@ -68,7 +92,7 @@ public class Phobos
 			legalFlag = false;
 			checkLegal = "0000";
 			gameBoard.cleanup();
-			currentCompLegalMoves.clear();
+			//currentCompLegalMoves.clear();
 			//if (gameBoard.isGameOver()) break;
 				}
 			gameBoard.displayActualBoard(board);
