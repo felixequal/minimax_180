@@ -5,6 +5,7 @@ import java.util.Stack;
 
 public class Board
 {
+	long start = 0;
 	int[][] board;
 	int removeIndex = 99;
 	ArrayList<Piece> pieces;
@@ -12,11 +13,18 @@ public class Board
 	Bishop hBishop2;
 	Bishop cBishop1;
 	Bishop cBishop2;
+	Bishop hBishop3;
 	Bishop cBishop3;
-	Bishop cBishop5;
+	Bishop hBishop4;
+	Bishop cBishop4;
+	Knight hKnight1;
+	
+	King compKing;
 	Piece mostRecentlyMoved;
 	King humanKing;
-	ArrayList<ArrayList<String>> moves;
+	Queen humanQueen;
+	Queen compQueen;
+	ArrayList<String> moves;
 	ArrayList<String> humanMoves;
 	ArrayList<String> compMoves;
 	Stack<GameState> allBoards;
@@ -27,23 +35,32 @@ public class Board
 	int evalEnding = 0;
 	GameState prevState;
 	int depth = 0;
-	int maxdepth = 3;
+	int maxdepth = 6;
 	private int moveIndex = 0;
-	
-	
+
+
 	public Board()
 		{
 			allBoards = new Stack<GameState>();
 			humanMoves = new ArrayList<String>();
 			compMoves = new ArrayList<String>();
-			moves = new ArrayList<ArrayList<String>>();
+			moves = new ArrayList<String>();
 			board = new int[7][8];
 			pieces = new ArrayList<Piece>();
-			pieces.add(hBishop1 = new Bishop(0, 3, 3, 'h','b'));
-			pieces.add(hBishop2 = new Bishop(0, 5, 3, 'h','b'));
-			pieces.add(cBishop1 = new Bishop(6, 3, -3, 'c','B'));
-			pieces.add(cBishop2 = new Bishop(6, 5, -3, 'c','B'));
-			pieces.add(humanKing = new King(1, 4, 1, 'h', 'k'));
+			pieces.add(humanQueen = new Queen(4,4,4,'h', 'q'));
+			pieces.add(hBishop1 = new Bishop(6, 3, 3, 'h','b'));
+			pieces.add(hBishop2 = new Bishop(6, 5, 3, 'h','b'));
+			
+			pieces.add(cBishop1 = new Bishop(0, 3, -3, 'c','B'));
+			pieces.add(cBishop2 = new Bishop(0, 5, -3, 'c','B'));
+			
+			pieces.add(hKnight1 = new Knight(3, 5, 2, 'h','n'));
+			
+			
+			
+			
+			pieces.add(humanKing = new King(6, 4, 1, 'h', 'k'));
+			pieces.add(compKing = new King(0,4,-1, 'c', 'K'));
 		}
 
 	public int[][] initBoard()
@@ -61,72 +78,91 @@ public class Board
 
 	public void makeMove(String legalMove)
 		{
-			
+
 			//generateLegalMoves();
 			if(!isGameOver())
 				{
-			int oldX =0, oldY =0, newX =0, newY =0;	
-			oldX = (int)legalMove.charAt(0)-48;
-			oldY = (int)legalMove.charAt(1)-48;
-			newX = (int)legalMove.charAt(2)-48;
-			newY = (int)legalMove.charAt(3)-48;
-		//	System.out.println("legalmove X: " + oldX + "Y: " + oldY);
-			 int[][] prevBoard = new int[7][8];
-			for (int x = 0; x < board.length; x++)
-				{
-					prevBoard[x] = board[x].clone();
-				}
-			prevState = new GameState(prevBoard);
-			
-			for (Piece piece: pieces)
-				{
-
-					if(piece.getLocationX() == newX && piece.getLocationY() == newY) 
+					int oldX =0, oldY =0, newX =0, newY =0;	
+					oldX = (int)legalMove.charAt(0)-48;
+					oldY = (int)legalMove.charAt(1)-48;
+					newX = (int)legalMove.charAt(2)-48;
+					newY = (int)legalMove.charAt(3)-48;
+					//	System.out.println("legalmove X: " + oldX + "Y: " + oldY);
+					int[][] prevBoard = new int[7][8];
+					for (int x = 0; x < board.length; x++)
 						{
-							removeIndex = pieces.indexOf(piece);
-							System.out.println("del piece" + piece);
-							prevState.saveDeletedPiece(piece);
-							cleanupFlag = true;
-							//board[newX][newY]=0;
-			//				System.out.println("REMOVE-Piece:" + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() +  " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
-							}
-					if(oldX == piece.getLocationX() && oldY == piece.getLocationY())
-						{
-							piece.setGasleft(piece.getGasleft()-1);
-							piece.setLocation(newX, newY);
-							piece.clearMoves();
-							//mostRecentlyMoved = piece;
-							prevState.setOldX(oldX);
-							prevState.setOldY(oldY);
-							prevState.setCurrentX(newX);
-							prevState.setCurrentY(newY);
-							prevState.setPrevGas(piece.getGasleft());
-							board[oldX][oldY]=0;
-							board[newX][newY]=piece.getPieceCode();
-
-				//			System.out.println("YES Piece:" + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() +  " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
+							prevBoard[x] = board[x].clone();
 						}
-				//	else System.out.println("NOPE. Piece: "  + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() + " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
-				}
-			allBoards.push(prevState);
-			//System.out.println("previous state");
-			//prevState.display();
-			//initBoard();
-			//System.out.println("BOARD>MAKEMOVE: cleared human moves:" + humanMoves);
-			//System.out.println("BOARD>MAKEMOVE: cleared comp moves:" + compMoves);
-			
-			//change gameboard.
-			//change piece location.
-			//remember last piece location.
-			//remember gameboard (add to array).
-			//set piece deletion.
-			//remember deleted piece.
+					prevState = new GameState(prevBoard);
+
+					for (Piece piece: pieces)
+						{
+							int gasLeft = piece.getGasleft();
+							if(piece.getLocationX() == newX && piece.getLocationY() == newY) 
+								{
+									removeIndex = pieces.indexOf(piece);
+									//System.out.println("del piece" + piece);
+									prevState.saveDeletedPiece(piece);
+									cleanupFlag = true;
+									//board[newX][newY]=0;
+									//				System.out.println("REMOVE-Piece:" + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() +  " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
+								}
+							if(oldX == piece.getLocationX() && oldY == piece.getLocationY() && piece.getGasleft() > 0)
+								{
+									prevState.setPrevGas(piece.getGasleft());
+									if(board[newX][newY] != 0)
+										{
+											if((piece.getPieceCode() < 0 && board[newX][newY] != -1)
+													||(piece.getPieceCode() > 0 && board[newX][newY] != 1))
+												{
+													piece.setGasleft(3);
+												}
+										}
+									else{
+										piece.setGasleft(gasLeft-=1);
+									}
+
+									piece.setLocation(newX, newY);
+									//piece.clearMoves();
+									//mostRecentlyMoved = piece;
+									prevState.setOldX(oldX);
+									prevState.setOldY(oldY);
+									prevState.setCurrentX(newX);
+									prevState.setCurrentY(newY);
+
+									board[oldX][oldY]=0;
+									board[newX][newY]=piece.getPieceCode();
+
+									//			System.out.println("YES Piece:" + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() +  " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
+								}
+							//	else System.out.println("NOPE. Piece: "  + piece.getCodeChar() + " " + piece.getOwner() + " " + piece.getPieceCode() + " X:" + piece.getLocationX() + " Y: " + piece.getLocationY());
+						}
+					//prevState.display();
+					allBoards.push(prevState);
+					cleanup();
+					//System.out.println("previous state");
+					//prevState.display();
+					//initBoard();
+					//System.out.println("BOARD>MAKEMOVE: cleared human moves:" + humanMoves);
+					//System.out.println("BOARD>MAKEMOVE: cleared comp moves:" + compMoves);
+
+					//change gameboard.
+					//change piece location.
+					//remember last piece location.
+					//remember gameboard (add to array).
+					//set piece deletion.
+					//remember deleted piece.
 				}
 		}
-	
-	public void revertMove(GameState prev)
+
+	public void revertMove()
 		{
-			System.out.println("allBoards size:" + allBoards.size());
+			gameOver = false;
+			evalEnding = 0;
+			GameState prev =
+					null;
+			if(!allBoards.empty()){prev = allBoards.pop();
+			//System.out.println("allBoards size:" + allBoards.size());
 			int[][] savedBoard = prev.getBoard();
 			for (int x = 0; x < savedBoard.length; x++)
 				{
@@ -134,7 +170,7 @@ public class Board
 						{
 							board[x][y] = savedBoard[x][y];
 						}
-					
+
 				}
 			for (Piece piece: pieces)
 				{
@@ -145,114 +181,116 @@ public class Board
 						}
 				}
 			Piece restoredPiece = prev.getDeletedPiece();
-			if(restoredPiece != null && board[restoredPiece.getLocationX()][restoredPiece.getLocationY()] == 0)
+			if(restoredPiece != null)
 				{
 					pieces.add(restoredPiece);
-					System.out.println("in revertMove. restoredPiece not null: ");
-					restoredPiece.print();
+					//	System.out.println("in revertMove. restoredPiece not null: ");
+					//restoredPiece.print();
 				}
-				
+
 			//mostRecentlyMoved.setLocation(mostRMoldX, mostRMoldY);
-		}
+			}}
 
 	public ArrayList<String> generateLegalMoves(char c)
-		{
-			
-			//displayBoard();
-			for (Piece piece :pieces) 
-				{ if (piece.getOwner() == c) 
-					{
+	{
+		moves.clear();
+		//displayBoard();
+		for (Piece piece :pieces) 
+			{ if (piece.getOwner() == c) 
+				{
 					//System.out.print("Start position: " + piece.getLocationX() + piece.getLocationY() + " ");
 					int[][] tempBoard = new int[7][8];
 					for (int x = 0; x < board.length; x++)
 						{
 							tempBoard[x] = board[x].clone();
 						}
-					//displayActualBoard(board);
-					//tempBoard = board.clone(); doesn't work. java's array.clone only works properly on 1-d arrays.
-
 					ArrayList<String> temp = new ArrayList<String>();
-					//System.out.println("temp init: " + temp);
-		//			System.out.println("moves GLM: " + piece.getMoves());
-					if(piece.getGasleft() != 0){
+
+					if(piece.getGasleft() > 0){
 						piece.clearMoves();
-					//	System.out.println("owner: " + c + "Piece moves: " + piece.getMoves());
 						temp.addAll(piece.theMoves(tempBoard));
-						//displayActualBoard(tempBoard);
-						//System.out.println("temp after addall: " + temp);
-						if (c == 'c') {compMoves.addAll(temp); if (compMoves.isEmpty()) gameOver('c'); }
-						if (c == 'h') {humanMoves.addAll(temp); if (humanMoves.isEmpty()) gameOver('h');}
-						//else {System.out.println("no moves!");}
-						//System.out.println("BOARD>generateLegalMoves:Owner: "+ piece.getOwner() + " piece: " +piece.getCodeChar());
-					//	System.out.println("BOARD>generateLegalMoves:indiv moves: " + piece.getMoves());
-					//	convertMoves(piece.getMoves());
+						moves.addAll(temp); 
+						
+
 						temp.clear();
+
 					}
 
-					//System.out.println("BOARD>generateLegalMoves:Owner: "+ piece.getOwner() + " piece: " +piece.getCodeChar());
-					//System.out.println("BOARD>generateLegalMoves:indiv moves: " + piece.getMoves());
-					//System.out.println("BOARD>generateLegalMoves:Display Board");
-					//System.out.println("BOARD>generateLegalMoves:actual board");
-					
 				}
-			
-			//convertMoves(humanMoves);
-		//	if (humanMoves.isEmpty()) gameOver(0);
-		//	if(compMoves.isEmpty()) gameOver(1);
-			
-				}
-			if (c == 'c') return compMoves;
-			if (c == 'h') return humanMoves;
-			else return null;
-			
-		}
+
+			}//if (moves.isEmpty()) gameOver(c);
+
+		return moves;
+	}
 
 	public int eval(String move)
-	{
-		System.out.print("eval this: " + move);
-		int score=0;
-				int x = (int)move.charAt(2)-48;
-				int y = (int)move.charAt(3)-48;
-				System.out.print(" x: " + x + " y: " + y +" value: " + board[x][y]);
-				if(board[x][y] != 0) score = 5;
-		System.out.println(" score: " + score);
-		return score;
-	}
-	
+		{
+			//System.out.println("eval this: " + move);
+			int score=0;
+			int x = (int)move.charAt(2)-48;
+			int y = (int)move.charAt(3)-48;
+			//System.out.println(" x: " + x + " y: " + y +" value: " + board[x][y]);
+			//displayActualBoard(board);
+			if(board[x][y] != 0) score = 5;
+			//System.out.println(" score: " + score);
+			return score;
+		}
+
 	void minimax(int[][] board) 
-	{
-		//ArrayList<String> minimaxMoves = new ArrayList<String>();
-		moves.add(generateLegalMoves('c'));
-		//String bestMove;
-		int bestScore = -9999;
-		int currentScore;
-		System.out.println("minimax depth:" + depth);
-		ArrayList<String> theseMoves = new ArrayList<String>();
-		theseMoves = moves.get(moveIndex);
-		
+		{
+			//ArrayList<String> minimaxMoves = new ArrayList<String>();
+			//(generateLegalMoves('c'));
+			//String bestMove;
+			start = System.nanoTime()/1000000000;
+			int bestScore = -9999;
+			int currentScore;
+			//System.out.println("minimax depth:" + depth);
+			ArrayList<String> theseMoves = new ArrayList<String>();
+			theseMoves = generateLegalMoves('c');
+			if (theseMoves.isEmpty()) gameOver('c');
+			System.out.println("these moves" + theseMoves);
+			String[] argh = new String[theseMoves.size()];
+			for(int x = 0;x<theseMoves.size();x++)
+				{
+					argh[x] = theseMoves.get(x);
+				}
+			//System.out.println("starting Moves at depth " + depth + " : " + theseMoves);
 			String bestMove = "";
-			try {for (String move: theseMoves)
-			{
-				makeMove(move);
-				System.out.println("move" + move);
-			currentScore = min(move, depth);
-			if (currentScore > bestScore) bestMove = move;
-			System.out.println("Bestmove" + bestMove);
-			revertMove(allBoards.pop());
-			} }catch (Exception e) {}
-	
-		System.out.println("BESTMOVE???????????????" + bestMove);
-		makeMove(bestMove);
-		depth = 0;
-	}
-	
+			//try {
+			for(int x = 0;x<argh.length;x++)
+				{
+
+					//}
+
+					makeMove(argh[x]);
+					//	System.out.println("move: " + argh[x]);
+					currentScore = min(argh[x], depth+1);
+					if (currentScore > bestScore) { /*System.out.println("Bestmove" + bestMove);*/ bestMove = argh[x]; }
+
+					revertMove();
+				} //}catch (Exception e) {}
+
+			//System.out.println("BESTMOVE???????????????" + bestMove);
+			makeMove(bestMove);
+			System.out.println("!!!!Computer Move:" + bestMove + " !!!!");
+			depth = 0;
+		}
+
 	int min(String move, int depth)
 		{
-			moveIndex++;
+			//	moveIndex++;
 			//int depth = 0;
+//			displayBoard();
 			ArrayList<String> minMoves = new ArrayList<String>();
 			minMoves = generateLegalMoves('h');
-			moves.add(minMoves);
+			if (minMoves.isEmpty()) gameOver('h');
+			String[] mins = new String[minMoves.size()];
+			for(int x = 0;x<minMoves.size();x++)
+				{
+					mins[x] = minMoves.get(x);
+				}
+			//	System.out.println("minMoves at depth" + depth + " : " + minMoves);
+			//moves.add(minMoves);
 			//minMoves = moves.get(moveIndex);
 			String bestMove;
 			int currentScore;
@@ -260,70 +298,77 @@ public class Board
 			//depth++;
 			//System.out.println("min depth:" + depth + "maxDepth: " + maxdepth + "moves: " + moves);
 			//return 0;
-			
+
 			if(isGameOver()) return evalEnding;
-			else if (depth > maxdepth) 
+			else if (depth == maxdepth || ((System.nanoTime()/1000000000)-start) > 4.9) 
 				{return eval(move);}
-		//	return 0;
+			//	return 0;
 			else{
 				//minMoves = generateLegalMoves('h');
-				for(String newMove1: minMoves)
-				{
-					
-					makeMove(newMove1);
-					currentScore = max(newMove1, depth+1);
-				//	System.out.println("MIN:currentScore:" + currentScore);
-					if (currentScore < bestScore) bestMove = newMove1;
-					revertMove(allBoards.pop());
-				}
-				
+				for(int x = 0;x<mins.length;x++)
+					{
+						makeMove(mins[x]);
+						currentScore = max(mins[x], depth+1);
+						//	System.out.println("MIN:currentScore:" + currentScore);
+						if (currentScore < bestScore) bestMove = mins[x];
+						revertMove();
+					}
+
 			}
-			moveIndex--;
+			//moveIndex--;
 			//depth--;
 			return bestScore;
 		}
-	
+
 	int max(String move, int depth)
-	{
-		//int depth = 0;
-		moveIndex++;
-		//moves.add();
-		ArrayList<String> maxMoves = new ArrayList<String>();
-		maxMoves = generateLegalMoves('c');
-		moves.add(maxMoves);
-		//System.out.println("max depth:" + depth + "maxDepth: " + maxdepth + "moves: " + moves);
-		//maxMoves = moves.get(moveIndex);
-		String bestMove = "";
-		int currentScore;
-		int bestScore = -9999;
-		//depth++;
-		System.out.println("max depth:" + depth);
-		if(isGameOver()) return evalEnding;
-		else if (depth > maxdepth) {return eval(move);}
-		else{
-			 //maxMoves = generateLegalMoves('c');
-		for(String newMove: maxMoves)
-			{
-				makeMove(newMove);
-				currentScore = min(newMove, depth+1);
-	/*			System.out.println("MAX:currentScore:" + currentScore);
-				System.out.println("MAX:bestScore:" + bestScore);
-				System.out.println("MAXb:bestmove:" + bestMove);
-				System.out.println("MAX:currentmove:" + bestMove);
-				*/
-				if (currentScore > bestScore) bestMove = newMove;
-			//	System.out.println("MAXa:bestmove:" + bestMove);
-				revertMove(allBoards.pop());
+		{
+			//int depth = 0;
+			//	moveIndex++;
+			//moves.add();
+	//		displayBoard();
+			ArrayList<String> maxMoves = new ArrayList<String>();
+			maxMoves = generateLegalMoves('c');
+			if(maxMoves.isEmpty()) gameOver('c');
+			String[] maxs = new String[maxMoves.size()];
+			for(int x = 0;x<maxMoves.size();x++)
+				{
+					maxs[x] = maxMoves.get(x);
+				}
+			//moves.add(maxMoves);
+			//System.out.println("maxMoves at depth" + depth + " : "  + maxMoves);
+			//System.out.println("max depth:" + depth + "maxDepth: " + maxdepth + "moves: " + moves);
+			//maxMoves = moves.get(moveIndex);
+			String bestMove = null;
+			int currentScore;
+			int bestScore = -9999;
+			//depth++;
+			//	System.out.println("max depth:" + depth);
+			if(isGameOver()) return evalEnding;
+			else if (depth == maxdepth || ((System.nanoTime()/1000000000)-start) > 4.9) {return eval(move);}
+			else{
+				//maxMoves = generateLegalMoves('c');
+				for(int x = 0; x < maxs.length;x++)
+					{
+						makeMove(maxs[x]);
+						currentScore = min(maxs[x], depth+1);
+						//		System.out.println("MAX:currentScore:" + currentScore);
+						//		System.out.println("MAX:bestScore:" + bestScore);
+						//		System.out.println("MAXb:bestmove:" + bestMove);
+						//		System.out.println("MAX:currentmove:" + bestMove);
+
+						if (currentScore > bestScore) bestMove = maxs[x];
+						//	System.out.println("MAXa:bestmove:" + bestMove);
+						revertMove();
+					}
 			}
+			//depth--;
+			//moveIndex--;
+			return bestScore;
 		}
-		//depth--;
-		moveIndex--;
-		return bestScore;
-	}
-	
-	
-	
-	
+
+
+
+
 
 	public void displayBoard()
 		{
@@ -420,7 +465,7 @@ public class Board
 			//System.out.println("converted moves: ");
 			for(String move: moveList)
 				{
-					
+
 					//int row = Integer.parseInt(move.(0));
 					//System.out.println(Integer.valueOf(7-String.valueOf(move.charAt(0)));
 					if (move.charAt(0) == '0') System.out.print("7");
@@ -454,7 +499,7 @@ public class Board
 					if (move.charAt(3) == '6') System.out.print("G");
 					if (move.charAt(3) == '7') System.out.print("H");
 
-				//	System.out.print(", ");
+					//	System.out.print(", ");
 					//char temp = move.charAt(x);
 					//int value = Integer.valueOf(temp);
 					//System.out.printf("HI %d\n", value);
@@ -491,42 +536,42 @@ public class Board
 	public void cleanup()
 		{
 			if (cleanupFlag == true){
-			System.out.print("Piece to be removed: ");
-			(pieces.get(removeIndex)).info();
-			pieces.remove(removeIndex);
-			//humanMoves.clear();
-			//compMoves.clear();
-			cleanupFlag = false;
-			removeIndex = 99;
+				//	System.out.print("Piece to be removed: ");
+				//(pieces.get(removeIndex)).info();
+				pieces.remove(removeIndex);
+				//humanMoves.clear();
+				//compMoves.clear();
+				cleanupFlag = false;
+				removeIndex = 99;
 			}
 		}
-	
-	public void gameOver( char flag)
-	{
-		if (flag == 'h') winner = "Computer Wins"; evalEnding = -999;
-		if(flag == 'c') winner = "Human Wins"; evalEnding = 999;
-		gameOver = true;
-	}
-	
+
+	public void gameOver(char flag)
+		{
+			if (flag == 'h') winner = "Computer Wins"; evalEnding = -999;
+			if(flag == 'c') winner = "Human Wins"; evalEnding = 999;
+			gameOver = true;
+		}
+
 	public String getWinner()
 		{
-		return winner;
+			return winner;
 		}
 
 	public boolean isGameOver()
-	{
-		return gameOver;
-		
-	}
-	
+		{
+			return gameOver;
+
+		}
+
 	public Stack<GameState> getAllBoards()
 	{
-	return allBoards;
+		return allBoards;
 	}
 
-public void setAllBoards(Stack<GameState> allBoards)
-	{
-	this.allBoards = allBoards;
-	}
+	public void setAllBoards(Stack<GameState> allBoards)
+		{
+			this.allBoards = allBoards;
+		}
 
 }

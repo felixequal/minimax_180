@@ -8,7 +8,6 @@ public class Phobos
 	
 	public static void main(String[] args) throws InterruptedException
 		{
-			ArrayList<String> currentCompLegalMoves;
 			ArrayList<String> currentHumanLegalMoves;
 			String humanMove;
 			String checkLegal = "0000";
@@ -24,6 +23,7 @@ public class Phobos
 			while (true)
 				{
 					currentHumanLegalMoves = gameBoard.generateLegalMoves('h');
+					//System.out.println("PHOBOS: all human moves: " + currentHumanLegalMoves);
 					//currentHumanLegalMoves = gameBoard.getHumanMoves();
 				/*	for(String move: currentHumanLegalMoves)
 						{
@@ -43,16 +43,28 @@ public class Phobos
 			else System.out.println(" **Illegal move** ");
 			}
 			System.out.println("Correct legal human move entered. converted human input to: " + checkLegal);
-			System.out.println("PHOBOS: all human moves: " + gameBoard.humanMoves);
+			
 			gameBoard.makeMove(checkLegal);
 			
 			legalFlag = false;
 			checkLegal = "0000";
-			gameBoard.cleanup();
+			//gameBoard.cleanup();
 			board = gameBoard.initBoard();
 			gameBoard.displayBoard();
 			currentHumanLegalMoves.clear();
-			Thread.sleep(2000);
+			long start = System.nanoTime()/1000000000;
+			long end;
+			while (true)
+				{
+					
+					//((start - (System.nanoTime()/1000000000)) == 4.9))
+				end = ((System.nanoTime()/1000000000)-start);
+				//System.out.println("time" + end);
+				if (end > 4.9) break;
+					
+				}
+			//long end = 
+			//Thread.sleep(2000);
 			/*System.out.println("retrieve last gameState?");
 			String yesno = "";
 			yesno = scan.nextLine();
@@ -76,11 +88,14 @@ public class Phobos
 				*/
 			//gameBoard.generateLegalMoves('c');
 			
-			System.out.println("PHOBOS: all Comp moves: " + gameBoard.compMoves);
+			//System.out.println("PHOBOS: all Comp moves: " + gameBoard.compMoves);
 			//currentCompLegalMoves = gameBoard.getCompMoves();
 			//if(currentCompLegalMoves.isEmpty()) gameBoard.gameOver('c');
-			//if (gameBoard.isGameOver()) break;
+			if (gameBoard.isGameOver()) break;
+			
 			gameBoard.minimax(board);
+			//long end = System.nanoTime();
+			//System.out.println("Time:" + ((end - start)/1000000000.0));
 			//Random rand = new Random();
 			//int r = rand.nextInt();
 			//r= r % currentCompLegalMoves.size();
@@ -91,7 +106,7 @@ public class Phobos
 			
 			legalFlag = false;
 			checkLegal = "0000";
-			gameBoard.cleanup();
+			//gameBoard.cleanup();
 			//currentCompLegalMoves.clear();
 			//if (gameBoard.isGameOver()) break;
 				}

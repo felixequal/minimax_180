@@ -4,7 +4,69 @@ public class GameState
 
 		int[][] savedBoard;
 		Piece deletedPiece;
+		int oldX, oldY, currentX, currentY;
+		int prevGas;
 		
+	public int getPrevGas()
+			{
+			return prevGas;
+			}
+
+
+		public void setPrevGas(int prevGas)
+			{
+			this.prevGas = prevGas;
+			}
+
+
+	public int getOldX()
+			{
+			return oldX;
+			}
+
+
+		public void setOldX(int oldX)
+			{
+			this.oldX = oldX;
+			}
+
+
+		public int getOldY()
+			{
+			return oldY;
+			}
+
+
+		public void setOldY(int oldY)
+			{
+			this.oldY = oldY;
+			}
+
+
+		public int getCurrentX()
+			{
+			return currentX;
+			}
+
+
+		public void setCurrentX(int currentX)
+			{
+			this.currentX = currentX;
+			}
+
+
+		public int getCurrentY()
+			{
+			return currentY;
+			}
+
+
+		public void setCurrentY(int currentY)
+			{
+			this.currentY = currentY;
+			}
+
+
 	public GameState(int[][] oldBoard)
 		{
 			savedBoard = new int[7][8];

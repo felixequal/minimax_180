@@ -50,21 +50,28 @@ public class King extends Piece
 			//b+=incrementB;
 			x= a % 7;
 			y= b % 8;
-			while ((a>= 0 && a < 7 && b < 8 && b >= 0)) 
+			while ((a>= 0 && a < 7 && b < 8 && b >= 0))
 				{
 					//int[][]tempBoard2 = new int[7][8];
 					//tempBoard2 = board;
 					opposingPiece = tempBoard[x][y];
 					opposingPiece *= codeModifier;
 					//System.out.println("Opposing piece = " + opposingPiece + "codeModifier = " + codeModifier);
-					if(opposingPiece == 6 || opposingPiece < 0)	
+					if((opposingPiece == 6 || opposingPiece < 0) && opposingPiece != 1)
 						{
 					tempBoard[x][y] = 6;
 					String move = (String.valueOf(getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
 					getMoves().add(move);
 					break;
 					}
-					if(opposingPiece > 0  && opposingPiece != 5 && opposingPiece != 6) {break;} //this will need to change if we can take own pieces
+					if((opposingPiece == 6 || opposingPiece > 0) && opposingPiece != 1)	
+						{
+					tempBoard[x][y] = 7;
+					String move = (String.valueOf(getLocationX())) + String.valueOf(getLocationY()) + String.valueOf(x) + String.valueOf(y);
+					getMoves().add(move);
+					break;
+					}
+					if(opposingPiece == 1) {break;} //this will need to change if we can take own pieces
 					if(opposingPiece == 0 || opposingPiece == 5)
 					{
 					//System.out.println("up-right a: " + a + " b: " + b);
